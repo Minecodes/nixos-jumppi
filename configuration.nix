@@ -16,6 +16,7 @@
     keyMap = "de";
   };
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.copySystemConfiguration = true;
   system.stateVersion = "26.11";
 };
