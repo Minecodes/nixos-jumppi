@@ -5,28 +5,12 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = inputs: {
-    systems = [ "aarch64-linux" ];
-    nixosModules.default = { config, pkgs, ... }: {
-      imports = [
-        ./hardware-configuration.nix
-        ./user-configuration.nix
-        ./services-configuration.nix
-      ];
-
-      boot.loader.grub.enable = false;
-      boot.loader.generic-extlinux-compatible.enable = true;
-      networking.hostName = "jumppi";
-      networking.networkmanager.enable = true;
-      time.timeZone = "Europe/Berlin";
-      i18n.defaultLocale = "en_US.UTF-8";
-      console = {
-        font = "Lat2-Terminus16";
-        keyMap = "de";
+  outputs = { self, nixpkgs, ... }@inputs: {
+    nixosConfigurations = {
+      jumppi = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [ ./configuration.nix ];
       };
-
-      system.copySystemConfiguration = true;
-      system.stateVersion = "26.11";
     };
   };
 }
