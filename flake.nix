@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = inputs: {
+  outputs = { self, nixpkgs }: {
     nixosModules.default = { config, pkgs, ... }: {
       imports = [
         ./hardware-configuration.nix
@@ -24,8 +24,16 @@
         keyMap = "de";
       };
 
-      system.copySystemConfiguration = true;
+      # system.copySystemConfiguration = true;
       system.stateVersion = "26.11";
     };
+
+    nixosConfigurations.jumppi = nixpkgs.lib.nixosSystem {
+      system = "aarch64-linux";
+      modules = [ self.nixosModules.default ];
+    };
+
+    packages.aarch64-linux.jumppi =
+        self.nixosConfigurations.jumppi.config.system.build.toplevel;
   };
 }
